@@ -1,7 +1,7 @@
 export interface App {
     plan: (delivery: Deliverable) => App;
-    transport(): Transportable
-    getDeliveries(): Deliverable[]
+    transport:() => Transportable
+    getDeliveries:() => Deliverable[]
 }
 
 export interface Deliverable {
