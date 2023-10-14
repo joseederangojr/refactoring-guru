@@ -10,7 +10,7 @@ describe('LogisticsApp', () => {
   });
 
   it('should launch the app without crashing', () => {
-    expect(logisticsApp).toBeDefined();
+    expect(logisticsApp).toBeInstanceOf(LogisticsApp);
     expect(logisticsApp.getDeliveries()).toHaveLength(0);
   })
 
@@ -29,46 +29,46 @@ describe('LogisticsApp', () => {
     })
   });
 
-  describe('createLogistics', () => {
+  describe('transport', () => {
     it('should throw a NoDeliverableException if there are no deliverables', () => {
-      expect(() => logisticsApp.createLogistics()).toThrow(new NoDeliverableException);
+      expect(() => logisticsApp.transport()).toThrow(new NoDeliverableException);
     });
 
-    it('should return an instance of AirLogistic if the deliverable is of type AirLogistic', () => {
+    it('should return an instance of Airplane if the deliverable is of type AirLogistic', () => {
       logisticsApp.plan(new Delivery(AirLogistic.LOGISTIC_TYPE));
 
-      const result = logisticsApp.createLogistics();
+      const result = logisticsApp.transport();
 
-      expect(result).toBeInstanceOf(AirLogistic);
+      expect(result).toBeInstanceOf(Airplane);
     });
 
-    it('should return an instance of SeaLogistic if the deliverable is of type SeaLogistic', () => {
+    it('should return an instance of Ship if the deliverable is of type SeaLogistic', () => {
         logisticsApp.plan(new Delivery(SeaLogistic.LOGISTIC_TYPE));
   
-        const result = logisticsApp.createLogistics();
+        const result = logisticsApp.transport();
   
-        expect(result).toBeInstanceOf(SeaLogistic);
+        expect(result).toBeInstanceOf(Ship);
       });
 
-      it('should return an instance of LandLogistic if the deliverable is of type LandLogistic', () => {
+      it('should return an instance of Truck if the deliverable is of type LandLogistic', () => {
         logisticsApp.plan(new Delivery(LandLogistic.LOGISTIC_TYPE));
   
-        const result = logisticsApp.createLogistics();
+        const result = logisticsApp.transport();
   
-        expect(result).toBeInstanceOf(LandLogistic);
+        expect(result).toBeInstanceOf(Truck);
       });
 
     it('should throw a NoLogisticException if the deliverable is of an unknown type', () => {
       const unknownDeliverable = { getLogisticType: () => 'unknown' } as Delivery;
       logisticsApp.plan(unknownDeliverable);
 
-      expect(() => logisticsApp.createLogistics()).toThrow(new NoLogisticException);
+      expect(() => logisticsApp.transport()).toThrow(new NoLogisticException);
     });
 
     it('should remove the deliverable from the list of deliveries', () => {
       logisticsApp.plan(new Delivery(LandLogistic.LOGISTIC_TYPE));
 
-      logisticsApp.createLogistics();
+      logisticsApp.transport();
 
       expect(logisticsApp.getDeliveries()).toHaveLength(0)
     });
@@ -77,25 +77,22 @@ describe('LogisticsApp', () => {
     describe('Transportable', () => {
         it('should transport by airplane', () => {
             logisticsApp.plan(new Delivery(AirLogistic.LOGISTIC_TYPE));
-            const transport = logisticsApp.createLogistics().createTransport();
+            const transport = logisticsApp.transport();
             const result = transport.deliver();
-            expect(transport).toBeInstanceOf(Airplane);
             expect(result).toEqual('Delivering by airplane');
         })
 
         it('should transport by ship', () => {
             logisticsApp.plan(new Delivery(SeaLogistic.LOGISTIC_TYPE));
-            const transport = logisticsApp.createLogistics().createTransport();
+            const transport = logisticsApp.transport();
             const result = transport.deliver();
-            expect(transport).toBeInstanceOf(Ship);
             expect(result).toEqual('Delivering by ship');
         })
 
         it('should transport by truck', () => {
             logisticsApp.plan(new Delivery(LandLogistic.LOGISTIC_TYPE));
-            const transport = logisticsApp.createLogistics().createTransport();
+            const transport = logisticsApp.transport();
             const result = transport.deliver();
-            expect(transport).toBeInstanceOf(Truck);
             expect(result).toEqual('Delivering by truck');
         })
     })

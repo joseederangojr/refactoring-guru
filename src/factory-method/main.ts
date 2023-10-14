@@ -1,6 +1,6 @@
 export interface App {
     plan: (delivery: Deliverable) => App;
-    createLogistics(): Logisticable
+    transport(): Transportable
     getDeliveries(): Deliverable[]
 }
 
@@ -75,14 +75,8 @@ export class LogisticsApp implements App {
         return this;
     }
 
-    createLogistics(): Logisticable {
-        if(this.deliverables.length === 0) {
-            throw new NoDeliverableException
-        }
-
-        const deliverable = this.deliverables.shift()
-
-        switch(deliverable?.getLogisticType()) {
+    private createLogistics(delivery: Deliverable): Logisticable {
+        switch(delivery.getLogisticType()) {
             case AirLogistic.LOGISTIC_TYPE:
                 return new AirLogistic();
             case SeaLogistic.LOGISTIC_TYPE:
@@ -92,6 +86,16 @@ export class LogisticsApp implements App {
             default:
                 throw new NoLogisticException
         }
+    }
+
+    transport(): Transportable {
+        if(this.deliverables.length === 0) {
+            throw new NoDeliverableException
+        }
+
+        const deliverable = this.deliverables.shift()
+        const transport = this.createLogistics(deliverable!).createTransport();
+        return transport;
     }
 
     getDeliveries(): Deliverable[] {
