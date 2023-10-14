@@ -1,100 +1,53 @@
 import { describe, beforeEach, it, expect } from "bun:test";
+import {
+  VirtualMachineFactory,
+  VirtualMachine,
+  VirtualMachineManager,
+  AWSVirtualMachine,
+  AzureVirtualMachine,
+  GoogleVirtualMachine,
+  VirtualMachineNotSupportedException
+} from './main'
+import exp from "constants";
 
-import { LogisticsApp, AirLogistic, SeaLogistic, LandLogistic, NoDeliverableException, NoLogisticException, Delivery, Airplane, Ship, Truck } from './main';
-
-describe('LogisticsApp', () => {
-  let logisticsApp: LogisticsApp;
+describe('VirtualMachineManager', () => {
+  let manager: VirtualMachineManager;
 
   beforeEach(() => {
-    logisticsApp = new LogisticsApp();
+    manager = new VirtualMachineManager();
   });
 
   it('should launch the app without crashing', () => {
-    expect(logisticsApp).toBeInstanceOf(LogisticsApp);
-    expect(logisticsApp.getDeliveries()).toHaveLength(0);
+    expect(manager).toBeInstanceOf(VirtualMachineManager);
   })
 
-  describe('plan', () => {
-    it('should add to deliverables', () => {
-        logisticsApp
-            .plan(new Delivery(AirLogistic.LOGISTIC_TYPE))
-            .plan(new Delivery(SeaLogistic.LOGISTIC_TYPE))
-            .plan(new Delivery(LandLogistic.LOGISTIC_TYPE));
-        expect(logisticsApp.getDeliveries()).toHaveLength(3);
+  describe('createVirtualMachine', () => {
+    it('should throw a VirtualMachineNotSupportedException if the type is not supported', () => {
+      expect(() => manager.createVirtualMachine('not-supported')).toThrow(new VirtualMachineNotSupportedException());
     });
 
-    it('should return the instance of LogisticsApp', () => {
-        const retLogisticsApp = logisticsApp.plan(new Delivery(AirLogistic.LOGISTIC_TYPE));
-        expect(retLogisticsApp).toBeInstanceOf(LogisticsApp);
-    })
-  });
-
-  describe('transport', () => {
-    it('should throw a NoDeliverableException if there are no deliverables', () => {
-      expect(() => logisticsApp.transport()).toThrow(new NoDeliverableException);
+    it('should return an AWSVirtualMachine instance if the type is "aws"', () => {
+      const result = manager.createVirtualMachine('aws');
+      expect(result).toBeInstanceOf(AWSVirtualMachine);
+      expect(result.boot()).toBe('AWSVirtualMachine: booting...');
+      expect(result.restart()).toBe('AWSVirtualMachine: restarting...');
+      expect(result.shutdown()).toBe('AWSVirtualMachine: shutting down...');
     });
 
-    it('should return an instance of Airplane if the deliverable is of type AirLogistic', () => {
-      logisticsApp.plan(new Delivery(AirLogistic.LOGISTIC_TYPE));
-
-      const result = logisticsApp.transport();
-
-      expect(result).toBeInstanceOf(Airplane);
+    it('should return an AzureVirtualMachine instance if the type is "azure"', () => {
+      const result = manager.createVirtualMachine('azure');
+      expect(result).toBeInstanceOf(AzureVirtualMachine);
+      expect(result.boot()).toBe('AzureVirtualMachine: booting...');
+      expect(result.restart()).toBe('AzureVirtualMachine: restarting...');
+      expect(result.shutdown()).toBe('AzureVirtualMachine: shutting down...');
     });
 
-    it('should return an instance of Ship if the deliverable is of type SeaLogistic', () => {
-        logisticsApp.plan(new Delivery(SeaLogistic.LOGISTIC_TYPE));
-  
-        const result = logisticsApp.transport();
-  
-        expect(result).toBeInstanceOf(Ship);
-      });
-
-      it('should return an instance of Truck if the deliverable is of type LandLogistic', () => {
-        logisticsApp.plan(new Delivery(LandLogistic.LOGISTIC_TYPE));
-  
-        const result = logisticsApp.transport();
-  
-        expect(result).toBeInstanceOf(Truck);
-      });
-
-    it('should throw a NoLogisticException if the deliverable is of an unknown type', () => {
-      const unknownDeliverable = { getLogisticType: () => 'unknown' } as Delivery;
-      logisticsApp.plan(unknownDeliverable);
-
-      expect(() => logisticsApp.transport()).toThrow(new NoLogisticException);
+    it('should return a GoogleVirtualMachine instance if the type is "google"', () => {
+      const result = manager.createVirtualMachine('google');
+      expect(result).toBeInstanceOf(GoogleVirtualMachine);
+      expect(result.boot()).toBe('GoogleVirtualMachine: booting...');
+      expect(result.restart()).toBe('GoogleVirtualMachine: restarting...');
+      expect(result.shutdown()).toBe('GoogleVirtualMachine: shutting down...');
     });
-
-    it('should remove the deliverable from the list of deliveries', () => {
-      logisticsApp.plan(new Delivery(LandLogistic.LOGISTIC_TYPE));
-
-      logisticsApp.transport();
-
-      expect(logisticsApp.getDeliveries()).toHaveLength(0)
-    });
-
-
-    describe('Transportable', () => {
-        it('should transport by airplane', () => {
-            logisticsApp.plan(new Delivery(AirLogistic.LOGISTIC_TYPE));
-            const transport = logisticsApp.transport();
-            const result = transport.deliver();
-            expect(result).toEqual('Delivering by airplane');
-        })
-
-        it('should transport by ship', () => {
-            logisticsApp.plan(new Delivery(SeaLogistic.LOGISTIC_TYPE));
-            const transport = logisticsApp.transport();
-            const result = transport.deliver();
-            expect(result).toEqual('Delivering by ship');
-        })
-
-        it('should transport by truck', () => {
-            logisticsApp.plan(new Delivery(LandLogistic.LOGISTIC_TYPE));
-            const transport = logisticsApp.transport();
-            const result = transport.deliver();
-            expect(result).toEqual('Delivering by truck');
-        })
-    })
   });
 });

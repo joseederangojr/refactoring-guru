@@ -1,168 +1,86 @@
-export interface FurnitureFactory {
-    createChair: () => Chair;
-    createSofa: () => Sofa;
-    createTable: () => Table;
+export interface VirtualMachine {}
+export interface Storage {}
+export interface Network {}
+export interface CloudServiceFactory {
+    createVirtualMachine: () => VirtualMachine;
+    createStorage: () => Storage;
+    createNetwork: () => Network;
+}
+export interface CloudProviderFactory {
+    createCloudProvider: (type: string) => CloudServiceFactory;
 }
 
-export interface Chair {
-    sit: () => string;
-}
-export interface Sofa {
-    slouch: () => string;
-}
-export interface Table {
-    do: () => string;
-}
 
-export interface Order { }
+export class CloudProviderNotSupportException extends Error {}
 
-export interface FurnitureShop {
-    order: (order: Order) => FurnitureShop;
-    deliver: () =>  Chair | Sofa | Table;
-    getOrders: () => Order[];
-}
+export class AzureVirtualMachine implements VirtualMachine {}
+export class GoogleVirtualMachine implements VirtualMachine {}
+export class AWSVirtualMachine implements VirtualMachine {}
 
-export class VictorianFurnitureFactory implements FurnitureFactory {
-    static FURNITURE_TYPE = 'victorian';
-    createChair() {
-        return new VictorianChair();
+export class AzureStorage implements Storage {}
+export class GoogleStorage implements Storage {}
+export class AWSStorage implements Storage {}
+
+export class AzureNetwork implements Network {}
+export class GoogleNetwork implements Network {}
+export class AWSNetwork implements Network {}
+
+export class AzureCloudService implements CloudServiceFactory {
+    createVirtualMachine() {
+        return new AzureVirtualMachine();
     }
 
-    createSofa() {
-        return new VictorianSofa();
+    createNetwork() {
+        return new AzureNetwork();
     }
 
-    createTable() {
-        return new VictorianTable();
-    }
-}
-
-export class ModernFurnitureFactory implements FurnitureFactory {
-    static FURNITURE_TYPE = 'modern';
-    createChair() {
-        return new ModernChair();
-    }
-
-    createSofa() {
-        return new ModernSofa();
-    }
-
-    createTable() {
-        return new ModernTable();
+    createStorage() {
+        return new AzureStorage();
     }
 }
 
-export class ArtDecoFurnitureFactory implements FurnitureFactory {
-    static FURNITURE_TYPE = 'artdeco';
-    createChair() {
-        return new ArtDecoChair();
+
+export class GoogleCloudService implements CloudServiceFactory {
+    createVirtualMachine() {
+        return new GoogleVirtualMachine();
     }
 
-    createSofa() {
-        return new ArtDecoSofa();
+    createNetwork() {
+        return new GoogleNetwork();
     }
 
-    createTable() {
-        return new ArtDecoTable();
-    }
-}
-
-export class VictorianChair implements Chair {
-    sit() {
-        return 'VictorianChair'
-    }
-}
-export class ModernChair implements Chair {
-    sit() {
-        return 'ModernChair'
-    }
-}
-export class ArtDecoChair implements Chair {
-    sit() {
-        return 'ArtDecoChair'
+    createStorage() {
+        return new GoogleStorage();
     }
 }
 
-export class VictorianSofa implements Sofa {
-    slouch() {
-        return 'VictorianSofa'
+
+export class AWSCloudService implements CloudServiceFactory {
+    createVirtualMachine() {
+        return new AWSVirtualMachine();
     }
-}
-export class ModernSofa implements Sofa {
-    slouch() {
-        return 'ModernSofa'
+
+    createNetwork() {
+        return new AWSNetwork();
     }
-}
-export class ArtDecoSofa implements Sofa {
-    slouch() {
-        return 'ArtDecoSofa'
+
+    createStorage() {
+        return new AWSStorage();
     }
 }
 
-export class VictorianTable implements Table {
-    do() {
-        return 'VictorianTable';
-    }
-}
-export class ModernTable implements Table {
-    do() {
-        return 'ModernTable';
-    }
-}
-export class ArtDecoTable implements Table {
-    do() {
-        return 'ArtDecoTable';
-    }
-}
 
-export class Furniture implements Order {
-    constructor(public type: string, public furniture: string) {}
-}
-
-export class JoseFurnitureShop implements FurnitureShop {
-    private orders: Order[] = [];
-
-    order(order: Order): JoseFurnitureShop {
-        this.orders.push(order);
-        return this;
-    }
-
-    private factory(order: Furniture): FurnitureFactory {
-
-        switch(order.type) {
-            case VictorianFurnitureFactory.FURNITURE_TYPE:
-                return new VictorianFurnitureFactory();
-            case ModernFurnitureFactory.FURNITURE_TYPE:
-                return new ModernFurnitureFactory();
-            case ArtDecoFurnitureFactory.FURNITURE_TYPE:
-                return new ArtDecoFurnitureFactory();
+export class CloudProviderManager implements CloudProviderFactory {
+    createCloudProvider (type: string) {
+        switch (type) {
+            case 'azure':
+                return new AzureCloudService();
+            case 'google':
+                return new GoogleCloudService();
+            case 'aws':
+                return new AWSCloudService();
             default:
-                throw new NoFurnitureException();
+                throw new CloudProviderNotSupportException
         }
-    }
-
-    deliver(): Chair | Sofa | Table {
-        if(this.orders.length === 0) {
-            throw new NoOrderException();
-        }
-        const order = this.orders.shift() as Furniture
-        const factory = this.factory(order);
-        switch(order.furniture) {
-            case 'chair':
-                return factory.createChair();
-            case 'sofa':
-                return factory.createSofa();
-            case 'table':
-                return factory.createTable();
-            default:
-                throw new NoFurnitureException();
-        }
-    }
-
-    getOrders() {
-        return this.orders
     }
 }
-
-export class NoOrderException extends Error {}
-export class NoFurnitureException extends Error {}
