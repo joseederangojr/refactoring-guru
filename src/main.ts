@@ -1,3 +1,4 @@
+export type CloudProvider = 'google' | 'azure' | 'aws'
 export interface VirtualMachine {}
 export interface Storage {}
 export interface Network {}
