@@ -55,6 +55,10 @@ export class CloudHosting implements Hosting {
   }
 }
 
+/**
+ * @description Builder is a creational design pattern that lets you construct complex objects step by step. The pattern allows you to produce different types and representations of an object using the same construction code.
+ * @see https://refactoring.guru/design-patterns/builder
+ */
 export class CloudHostingBuilder implements HostingBuilder {
   private virtualMachine?: VirtualMachine;
   private storage?: Storage;

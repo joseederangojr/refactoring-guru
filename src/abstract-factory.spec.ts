@@ -11,6 +11,7 @@ import {
   GoogleNetwork,
   GoogleStorage,
   GoogleVirtualMachine,
+  CloudProvider,
 } from "~/main";
 
 import {
@@ -33,7 +34,7 @@ describe("CloudProviderManager", () => {
 
   describe("createCloudProvider", () => {
     it("should throw a CloudProviderNotSupportException if the type is not supported", () => {
-      expect(() => manager.createCloudProvider("not-supported")).toThrow(
+      expect(() => manager.createCloudProvider("not-supported" as CloudProvider)).toThrow(
         new CloudProviderNotSupportException()
       );
     });
