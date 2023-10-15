@@ -5,7 +5,7 @@ import {
   GoogleVirtualMachine,
   VirtualMachineNotSupportedException,
 } from "~/main";
-import { VirtualMachineManager } from "~/factory-method/main";
+import { VirtualMachineManager } from "~/factory-method";
 
 describe("VirtualMachineManager", () => {
   let manager: VirtualMachineManager;

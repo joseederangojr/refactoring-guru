@@ -18,7 +18,7 @@ import {
   AWSCloudService,
   AzureCloudService,
   GoogleCloudService,
-} from "~/abstract-factory/main";
+} from "~/abstract-factory";
 
 describe("CloudProviderManager", () => {
   let manager: CloudProviderManager;
