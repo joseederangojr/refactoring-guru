@@ -16,15 +16,15 @@ import {
 } from "~/main";
 
 import { CloudProviderFactory, CloudProviderManager } from "~/abstract-factory";
-import { CloudHostingDirectory,HostingBuilder, BuildHostingSpec, CloudHostingBuilder } from "~/builder";
+import { CloudHostingDirector, BuildHostingSpec, CloudHostingBuilder } from "~/builder";
 
-describe("CloudHostingDirectory", () => {
+describe("CloudHostingDirector", () => {
   let cloudProviderFactory: CloudProviderFactory;
-  let hostingDirector: CloudHostingDirectory;
+  let hostingDirector: CloudHostingDirector;
 
   beforeEach(() => {
     cloudProviderFactory = new CloudProviderManager();
-    hostingDirector = new CloudHostingDirectory(cloudProviderFactory);
+    hostingDirector = new CloudHostingDirector(cloudProviderFactory);
   });
 
   describe("makeGoogleHosting", () => {

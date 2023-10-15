@@ -86,7 +86,7 @@ export class CloudHostingBuilder implements HostingBuilder {
   }
 }
 
-export class CloudHostingDirectory implements HostingDirector {
+export class CloudHostingDirector implements HostingDirector {
   constructor(private cloudProviderFactory: CloudProviderFactory) {}
 
   makeGoogleHosting(builder: HostingBuilder) {
