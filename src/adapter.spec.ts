@@ -11,7 +11,7 @@ import {
 } from "~/adapter";
 
 describe("TypeAPlug", () => {
-  let plug: TypeAPlug;
+  let plug: Plug & Type<"A">;
 
   beforeEach(() => {
     plug = new TypeAPlug();
@@ -31,7 +31,7 @@ describe("TypeAPlug", () => {
 });
 
 describe("TypeBPlug", () => {
-  let plug: TypeBPlug;
+  let plug: Plug & Type<"B">;
 
   beforeEach(() => {
     plug = new TypeBPlug();
@@ -51,7 +51,7 @@ describe("TypeBPlug", () => {
 });
 
 describe("TypeBToTypeAAdapter", () => {
-  let adapter: TypeBToTypeAAdapter;
+  let adapter: Plug & Type<"A">;
 
   beforeEach(() => {
     adapter = new TypeBToTypeAAdapter(new TypeBPlug());
@@ -71,7 +71,7 @@ describe("TypeBToTypeAAdapter", () => {
 });
 
 describe("TypeAOutlet", () => {
-  let outlet: TypeAOutlet;
+  let outlet: Outlet & Type<"A">;
 
   beforeEach(() => {
     outlet = new TypeAOutlet();
@@ -95,12 +95,14 @@ describe("TypeAOutlet", () => {
     });
 
     it("should return true for a compatible plug via adapter", () => {
-      expect(outlet.attach(new TypeBToTypeAAdapter(new TypeBPlug()))).toBe(true);
+      expect(outlet.attach(new TypeBToTypeAAdapter(new TypeBPlug()))).toBe(
+        true,
+      );
     });
 
     it("should throw a PlugNotSupportedException for an incompatible plug type", () => {
       expect(() => outlet.attach(new TypeBPlug())).toThrow(
-        new PlugNotSupportedException()
+        new PlugNotSupportedException(),
       );
     });
   });
