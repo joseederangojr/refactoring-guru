@@ -167,3 +167,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.\*
+
+# Neotest debug file
+neotest-bun-debug-xml.txt
