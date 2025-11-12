@@ -10,6 +10,66 @@ import {
   TypeBToTypeAAdapter,
 } from "~/adapter";
 
+describe("TypeAPlug", () => {
+  let plug: TypeAPlug;
+
+  beforeEach(() => {
+    plug = new TypeAPlug();
+  });
+
+  describe("getType", () => {
+    it("should return 'A'", () => {
+      expect(plug.getType()).toBe("A");
+    });
+  });
+
+  describe("getProngCount", () => {
+    it("should return 2", () => {
+      expect(plug.getProngCount()).toBe(2);
+    });
+  });
+});
+
+describe("TypeBPlug", () => {
+  let plug: TypeBPlug;
+
+  beforeEach(() => {
+    plug = new TypeBPlug();
+  });
+
+  describe("getType", () => {
+    it("should return 'B'", () => {
+      expect(plug.getType()).toBe("B");
+    });
+  });
+
+  describe("getProngCount", () => {
+    it("should return 3", () => {
+      expect(plug.getProngCount()).toBe(3);
+    });
+  });
+});
+
+describe("TypeBToTypeAAdapter", () => {
+  let adapter: TypeBToTypeAAdapter;
+
+  beforeEach(() => {
+    adapter = new TypeBToTypeAAdapter(new TypeBPlug());
+  });
+
+  describe("getType", () => {
+    it("should return 'A'", () => {
+      expect(adapter.getType()).toBe("A");
+    });
+  });
+
+  describe("getProngCount", () => {
+    it("should return 2 for a TypeB plug", () => {
+      expect(adapter.getProngCount()).toBe(2);
+    });
+  });
+});
+
 describe("TypeAOutlet", () => {
   let outlet: TypeAOutlet;
 
