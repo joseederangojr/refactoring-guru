@@ -306,4 +306,16 @@ describe("MapDataSource", () => {
     const result = ds.select<User>("users", inserted.id);
     expect(result).toBeUndefined();
   });
+
+  it("should throw on insert to non-existing table", () => {
+    expect(() => ds.insert<User>("nonexistent", { name: "John", email: "john@example.com", age: 30 })).toThrow(TableNotFound);
+  });
+
+  it("should throw on update to non-existing table", () => {
+    expect(() => ds.update<User>("nonexistent", "1", { age: 31 })).toThrow(TableNotFound);
+  });
+
+  it("should throw on delete from non-existing table", () => {
+    expect(() => ds.delete("nonexistent", "1")).toThrow(TableNotFound);
+  });
 });

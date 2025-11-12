@@ -50,7 +50,7 @@ abstract class MapTable<TData> implements Table<TData> {
     }
 
     const newState = { ...current, ...data };
-    this.data.set(id, { ...current, ...data });
+    this.data.set(id, newState);
 
     return newState;
   }
